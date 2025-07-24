@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  container01_asp:
+    build: ./container01_asp
+    ports:
+      - "${PORT_ASP}:${PORT_ASP}"
+    networks:
+      ecommerce_net:
+        ipv4_address: ${VIP_ASP}
+    # ⚠️ Este container requer ambiente Windows + IIS. Não será executado em Linux.
+
+  container02_cgi:
+    build: ./container02_cgi
+    ports:
+      - "${PORT_CGI}:${PORT_CGI}"
+    networks:
+      ecommerce_net:
+        ipv4_address: ${VIP_CGI}
+    # CGI em Perl com servidor HTTP simples
+
+  container03_js:
+    build: ./container03_js
+    ports:
+      - "${PORT_JS}:${PORT_JS}"
+    networks:
+    volumes:
+      - node_data:/app
+      ecommerce_net:
+        ipv4_address: ${VIP_JS}
+    # Node.js com Express e views em EJS
+
+  container04_java:
+    volumes:
+      - java_data:/opt/jetty/webapps/root
+    build: ./container04_java
+    ports:
+      - "${PORT_JAVA}:${PORT_JAVA}"
+    networks:
+      ecommerce_net:
+        ipv4_address: ${VIP_JAVA}
+    # Java Servlet usando Jetty para entregar app web
+
+  container05_php:
+    build: ./container05_php
+    ports:
+      - "${PORT_PHP}:${PORT_PHP}"
+    networks:
+    volumes:
+      - php_data:/var/www/html
+      ecommerce_net:
+        ipv4_address: ${VIP_PHP}
+    # Apache + PHP com aplicação de e-commerce simples
+
+networks:
+  ecommerce_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.210.0/24
+
+volumes:
+  php_data:
+  node_data:
+
+  java_data:
