@@ -7,7 +7,6 @@ services:
       - "${PORT_ASP}:${PORT_ASP}"
     networks:
       ecommerce_net:
-        ipv4_address: ${VIP_ASP}
     # ⚠️ Este container requer ambiente Windows + IIS. Não será executado em Linux.
 
   container02_cgi:
@@ -16,7 +15,6 @@ services:
       - "${PORT_CGI}:${PORT_CGI}"
     networks:
       ecommerce_net:
-        ipv4_address: ${VIP_CGI}
     # CGI em Perl com servidor HTTP simples
 
   container03_js:
@@ -27,7 +25,6 @@ services:
     volumes:
       - node_data:/app
       ecommerce_net:
-        ipv4_address: ${VIP_JS}
     # Node.js com Express e views em EJS
 
   container04_java:
@@ -38,7 +35,6 @@ services:
       - "${PORT_JAVA}:${PORT_JAVA}"
     networks:
       ecommerce_net:
-        ipv4_address: ${VIP_JAVA}
     # Java Servlet usando Jetty para entregar app web
 
   container05_php:
@@ -49,18 +45,12 @@ services:
     volumes:
       - php_data:/var/www/html
       ecommerce_net:
-        ipv4_address: ${VIP_PHP}
     # Apache + PHP com aplicação de e-commerce simples
 
 networks:
   ecommerce_net:
     driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.210.0/24
 
-volumes:
-  php_data:
-  node_data:
-
-  java_data:
+networks:
+  ecommerce_net:
+    driver: bridge
